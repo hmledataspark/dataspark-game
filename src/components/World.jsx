@@ -1,11 +1,11 @@
 import React from 'react';
-import { MapPin, Building2, GraduationCap, Briefcase, Trophy } from 'lucide-react';
+import * as Icons from 'lucide-react';
 
 const World = ({ width, height, stops }) => {
   // Generate some random trees/decorations deterministically (based on position)
   const generateDecorations = () => {
     const decorations = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 150; i++) {
       const x = Math.floor(Math.random() * width);
       const y = Math.floor(Math.random() * height);
       decorations.push({ x, y, id: i, type: Math.random() > 0.5 ? 'tree' : 'bush' });
@@ -13,8 +13,6 @@ const World = ({ width, height, stops }) => {
     return decorations;
   };
 
-  // Use memo or static constant for decorations in real app to avoid re-gen on render
-  // Here we just generate once roughly (React might re-render so we should use useMemo, but keeping simple first)
   const decorations = React.useMemo(() => generateDecorations(), [width, height]);
 
   return (
@@ -31,15 +29,13 @@ const World = ({ width, height, stops }) => {
         }} 
       />
 
-      {/* Roads - connecting the stops? Or just a big winding road? 
-          Let's draw simple SVG paths connecting the stops in order 
-      */}
+      {/* Roads */}
       <svg className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-40">
         <polyline 
           points={stops.map(s => `${s.position.x},${s.position.y}`).join(' ')}
           fill="none"
           stroke="#e5e7eb"
-          strokeWidth="120"
+          strokeWidth="140"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
@@ -65,15 +61,14 @@ const World = ({ width, height, stops }) => {
             transform: 'translate(-50%, -50%)'
           }}
         >
-           {/* Simple CSS shapes for performance */}
            <div className={`rounded-full ${dec.type === 'tree' ? 'w-12 h-12 bg-green-700 shadow-lg' : 'w-6 h-6 bg-green-600'} opacity-60`}></div>
         </div>
       ))}
 
       {/* Career Stops */}
       {stops.map((stop) => {
-        const Icon = stop.type === 'education' ? GraduationCap : 
-                     stop.type === 'work' ? Briefcase : Trophy;
+        // Dynamically select icon component
+        const IconComponent = Icons[stop.icon] || Icons.MapPin;
         
         return (
           <div 
@@ -90,12 +85,12 @@ const World = ({ width, height, stops }) => {
             
             {/* Building/Icon */}
             <div className={`relative z-10 p-4 rounded-2xl shadow-2xl border-4 border-white ${stop.color} text-white transform transition-transform hover:scale-110`}>
-              <Icon size={48} strokeWidth={1.5} />
+              <IconComponent size={48} strokeWidth={1.5} />
             </div>
             
             {/* Label on the ground */}
-            <div className="mt-4 bg-white/80 px-3 py-1 rounded-full text-sm font-bold text-gray-700 shadow-sm backdrop-blur">
-              {stop.year}
+            <div className="mt-4 bg-white/90 px-3 py-1 rounded-full text-sm font-bold text-gray-700 shadow-md backdrop-blur border border-gray-200 whitespace-nowrap">
+              {stop.title}
             </div>
           </div>
         );
@@ -105,4 +100,3 @@ const World = ({ width, height, stops }) => {
 };
 
 export default World;
-

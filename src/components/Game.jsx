@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import World from './World';
 import Car from './Car';
-import { careerData } from '../data/career';
+import { companyData } from '../data/company';
 
 // Game Constants
 const ACCELERATION = 0.4;
@@ -102,7 +102,7 @@ const Game = ({ onStopEnter, onStopLeave }) => {
     let nearbyStop = null;
     const PROXIMITY_THRESHOLD = 150; // Distance to trigger
 
-    for (const stop of careerData) {
+    for (const stop of companyData) {
       const dx = gameState.x - stop.position.x;
       const dy = gameState.y - stop.position.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
@@ -138,7 +138,7 @@ const Game = ({ onStopEnter, onStopLeave }) => {
           transform: `translate3d(${cameraX}px, ${cameraY}px, 0)` 
         }}
       >
-        <World width={4000} height={4000} stops={careerData} />
+        <World width={4000} height={4000} stops={companyData} />
         <Car x={gameState.x} y={gameState.y} angle={gameState.angle} />
       </div>
     </div>
